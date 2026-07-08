@@ -12,41 +12,104 @@ body {
 }
 
 .app {
-  max-width: 640px;
-  margin: 60px auto;
+  max-width: 720px;
+  margin: 40px auto;
   padding: 0 20px;
-  text-align: center;
 }
 
 h1 {
   font-size: 2rem;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: #1a1a1a;
+  text-align: center;
 }
 
-.card {
+/* ===== Sections ===== */
+
+.section {
   background: white;
   border-radius: 12px;
-  padding: 32px;
+  padding: 24px;
   margin-top: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: left;
 }
 
-button {
-  background: #646cff;
-  color: white;
-  border: none;
+.section h2 {
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.desc {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.desc code {
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.demo-box {
+  background: #fafafa;
+  border: 1px solid #eee;
   border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
+  padding: 16px;
 }
 
-button:hover {
-  background: #535bf2;
+.demo-box p {
+  margin-bottom: 8px;
 }
 
-button:active {
-  transform: scale(0.98);
+.demo-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== Greeting Component ===== */
+
+.greeting {
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.greeting:last-child {
+  margin-bottom: 0;
+}
+
+.greeting-icon {
+  font-size: 1.5rem;
+}
+
+/* ===== ProfileCard Exercise ===== */
+
+.profile-card {
+  text-align: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 12px;
+}
+
+.profile-avatar {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.profile-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.profile-bio {
+  font-size: 0.9rem;
+  opacity: 0.85;
 }

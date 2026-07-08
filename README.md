@@ -33,21 +33,87 @@ react-beginner-tutorial/
 └── src/                # 源代码目录
     ├── main.jsx        # React 入口文件
     ├── App.jsx         # 根组件
-    └── index.css       # 全局样式
+    ├── index.css       # 全局样式
+    └── components/     # 组件目录
+        ├── Greeting.jsx    # 示例组件
+        └── ProfileCard.jsx # 练习组件
 ```
 
 ## 教程目录
 
 | # | 任务 | 说明 |
 |---|------|------|
-| 1 | ✅ **环境搭建**（当前） | 安装工具、创建项目、理解目录结构 |
-| 2 | **JSX 与组件** | 学会 JSX 语法，写出第一个组件 |
+| 1 | ✅ **环境搭建** | 安装工具、创建项目、理解目录结构 |
+| 2 | ✅ **JSX 与组件**（当前） | 学会 JSX 语法，写出第一个组件 |
 | 3 | **props** | 给组件传数据 |
 | 4 | **state 与事件处理** | 管理组件状态，响应用户操作 |
 | 5 | **条件渲染与列表渲染** | 动态控制显示内容 |
 | 6 | **综合项目：Todo List** | 用学到的知识完成一个完整项目 |
 
-每个任务都在对应的 Issue 中跟踪，完成后会更新本 README。
+## 第 2 课：JSX 与组件
+
+### JSX 是什么？
+
+JSX 是 JavaScript 的语法扩展，让你在 JS 文件里写类似 HTML 的代码。
+
+```jsx
+const element = <h1>你好，React！</h1>
+```
+
+这不是 HTML，也不是字符串，而是 JSX。它会被编译成 JavaScript。
+
+### 表达式嵌入 {}
+
+在 JSX 中，用 `{}` 可以嵌入任何 JavaScript 表达式：
+
+```jsx
+const name = '小明'
+const element = <h1>你好，{name}！</h1>
+
+// 还可以写运算、三元表达式等
+<p>3 + 5 = {3 + 5}</p>
+<p>{isBeginner ? '入门' : '高级'}</p>
+```
+
+### 函数组件
+
+React 应用由"组件"构成。组件就像自定义的 HTML 标签。
+
+```jsx
+// 定义一个组件：就是一个返回 JSX 的函数
+function Greeting() {
+  return <div>你好！</div>
+}
+
+// 使用组件：把它当 HTML 标签用
+<Greeting />
+```
+
+### 组件复用
+
+组件最大的好处是"复用"。一个组件可以在不同位置多次使用：
+
+```jsx
+<Greeting name="小明" />
+<Greeting name="小红" />
+<Greeting name="小白" />
+```
+
+### 练习
+
+打开 `src/components/ProfileCard.jsx`，补全个人信息卡片组件。
+
+要求：
+- 显示头像（可以用 emoji）
+- 显示你的姓名
+- 写一句自我介绍
+- 让卡片好看（你可以在 `index.css` 中添加样式）
+
+完成练习后，保存文件，浏览器会自动刷新。
+
+---
+
+每个任务都在对应的 Issue 中跟踪。
 
 ## 你学到了什么
 
