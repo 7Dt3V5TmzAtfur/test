@@ -2,6 +2,8 @@ import Greeting from './components/Greeting.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Counter from './components/Counter.jsx'
 import NameForm from './components/NameForm.jsx'
+import ConditionalDemo from './components/ConditionalDemo.jsx'
+import TodoList from './components/TodoList.jsx'
 
 function App() {
   // JSX 中可以用 {} 嵌入 JavaScript 表达式
@@ -140,6 +142,46 @@ function App() {
         <div className="demo-box">
           <Counter />
           <NameForm />
+        </div>
+      </section>
+
+      {/* ===== 10. 条件渲染 ===== */}
+      <section className="section">
+        <h2>10. 条件渲染</h2>
+        <p className="desc">
+          根据 state 决定显示什么内容。三种写法：
+          <code>if/else</code>、<code>? :</code>（三元）、<code>&amp;&amp;</code>（短路）。
+        </p>
+
+        <div className="demo-box">
+          <ConditionalDemo />
+        </div>
+      </section>
+
+      {/* ===== 11. 列表渲染 ===== */}
+      <section className="section">
+        <h2>11. 列表渲染 · map + key</h2>
+        <p className="desc">
+          用 <code>map()</code> 把数组渲染成一排 JSX，每个元素要给一个
+          唯一的 <code>key</code>。点击切换完成状态，看样式如何变化。
+        </p>
+
+        <div className="demo-box">
+          <TodoList />
+        </div>
+      </section>
+
+      {/* ===== 12. 练习 ===== */}
+      <section className="section">
+        <h2>12. 练习：改改看</h2>
+        <p className="desc">
+          打开 <code>src/components/TodoList.jsx</code>，试着自己改一改：
+          多加两条待办，或者把未完成和已完成分开显示（提示：用
+          <code> todos.filter(...)</code> 配合 <code>map()</code>）。
+        </p>
+
+        <div className="demo-box">
+          <TodoList />
         </div>
       </section>
     </div>
