@@ -47,8 +47,8 @@ react-beginner-tutorial/
 | 2 | ✅ **JSX 与组件** | 学会 JSX 语法，写出第一个组件 |
 | 3 | ✅ **props** | 给组件传数据 |
 | 4 | ✅ **state 与事件处理** | 管理组件状态，响应用户操作 |
-| 5 | **条件渲染与列表渲染**（当前） | 动态控制显示内容 |
-| 6 | **综合项目：Todo List** | 用学到的知识完成一个完整项目 |
+| 5 | ✅ **条件渲染与列表渲染** | 动态控制显示内容 |
+| 6 | **综合项目：Todo List**（当前） | 用学到的知识完成一个完整项目 |
 
 ## 第 2 课：JSX 与组件
 
@@ -601,6 +601,309 @@ export default TodoList
 2. 打开 `src/components/TodoList.jsx`，试着自己改一改：
    - 在数组里多加两条待办
    - 进阶：把未完成和已完成**分开显示**（提示：用 `todos.filter(todo => !todo.done)` 和 `todos.filter(todo => todo.done)` 配合 `map()`）
+
+完成练习后，保存文件，浏览器会自动刷新。
+
+## 第 6 课：综合项目 —— Todo List
+
+这一课把前 5 课学的知识综合起来，做一个完整的 Todo List 应用。**所有用到的知识都来自前 5 课，没有超纲内容。**
+
+### 项目效果
+
+- 添加待办（输入框 + 按钮）
+- 切换完成状态（点图标）
+- 删除待办（点 ✕）
+- 按状态筛选（全部 / 未完成 / 已完成）
+- 看到统计数字（共几项 · 已完成几项）
+
+### 组件拆分
+
+把应用拆成 5 个组件，每个组件只做一件事。这是 Task 3 学过的「组件复用 + props 传数据」的真实用场。
+
+```
+TodoApp（持有 state，负责调度）
+├── TodoInput     —— 输入框 + 添加按钮
+├── TodoStats     —— 显示总数 / 已完成数
+├── TodoFilter    —— 三个筛选按钮
+└── TodoItem × N  —— 单条待办（切换 + 删除）
+```
+
+### 数据怎么流动（props 单向数据流）
+
+这是综合项目最关键的一点：**state 放在父组件 TodoApp 里，数据通过 props 向下传，操作通过回调向上传。**
+
+```
+父组件 TodoApp                    子组件
+─────────────                    ──────────
+todos (state)      ──props──▶  TodoStats / TodoItem  （数据显示）
+filter (state)     ──props──▶  TodoFilter            （当前选中）
+addTodo (函数)     ──props──▶  TodoInput             （onAdd 回调）
+toggleTodo (函数)  ──props──▶  TodoItem              （onToggle 回调）
+deleteTodo (函数)  ──props──▶  TodoItem              （onDelete 回调）
+setFilter (函数)   ──props──▶  TodoFilter            （onFilterChange 回调）
+```
+
+为什么 state 放父组件？因为**多个子组件要共享同一份数据**：
+
+- `TodoStats` 要算总数（需要 `todos`）
+- `TodoItem` 要显示内容（需要 `todos` 里的每一项）
+- `TodoFilter` 改了筛选条件，`TodoItem` 列表要跟着变（需要 `filter`）
+
+如果 state 放各自子组件里，它们没法共享。所以**共享的 state 放最近的共同父组件**，这是 React 的核心原则。
+
+### 主组件 TodoApp
+
+`src/components/TodoApp.jsx`（核心代码，省略 import）：
+
+```jsx
+function TodoApp() {
+  // 1) 待办列表 state
+  const [todos, setTodos] = useState([
+    { id: 1, text: '学习 JSX', done: true },
+    { id: 2, text: '学习 props', done: true },
+    { id: 3, text: '学习 state', done: false },
+    { id: 4, text: '学习条件与列表渲染', done: false },
+  ])
+
+  // 2) 筛选 state：'all' / 'active' / 'completed'
+  const [filter, setFilter] = useState('all')
+
+  // 3) 添加：用 Date.now() 当唯一 id
+  function addTodo(text) {
+    setTodos([...todos, { id: Date.now(), text: text, done: false }])
+  }
+
+  // 4) 切换完成：map 返回新数组，匹配 id 的 done 取反
+  function toggleTodo(id) {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo
+      )
+    )
+  }
+
+  // 5) 删除：filter 返回新数组，排除指定 id
+  function deleteTodo(id) {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  }
+
+  // 6) 按筛选条件过滤要显示的待办
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === 'active') return !todo.done
+    if (filter === 'completed') return todo.done
+    return true
+  })
+
+  return (
+    <div className="todo-app">
+      <h3>📝 我的待办</h3>
+      <TodoInput onAdd={addTodo} />
+      <TodoStats todos={todos} />
+      <TodoFilter filter={filter} onFilterChange={setFilter} />
+      <ul className="todo-app-items">
+        {filteredTodos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
+        ))}
+      </ul>
+      {filteredTodos.length === 0 && (
+        <p className="todo-empty">🎉 没有待办，真棒！</p>
+      )}
+    </div>
+  )
+}
+```
+
+### 三个核心操作怎么实现
+
+#### 1. 添加（`addTodo`）
+
+```jsx
+function addTodo(text) {
+  setTodos([...todos, { id: Date.now(), text: text, done: false }])
+}
+```
+
+- `...todos` 是展开运算符（Task 3 学过），把旧待办全部铺开
+- 后面加一个新对象 `{ id, text, done: false }`
+- `Date.now()` 返回当前时间戳（毫秒），当唯一 id 用
+- 组合成一个**新数组**传给 `setTodos`
+
+> 为什么不写 `todos.push(newTodo)`？
+> 因为 state 必须是不可变更新（Task 5 讲过）。`push` 改的是原数组，React 可能检测不到变化。用 `[...todos, newTodo]` 创建新数组才对。
+
+#### 2. 切换完成（`toggleTodo`）
+
+```jsx
+function toggleTodo(id) {
+  setTodos(
+    todos.map((todo) =>
+      todo.id === id ? { ...todo, done: !todo.done } : todo
+    )
+  )
+}
+```
+
+- `map` 遍历每一项（Task 5）
+- 匹配 `id` 的那一项：用 `{ ...todo, done: !todo.done }` 创建新对象，`done` 取反，其他字段照抄
+- 不匹配的：原样返回 `todo`
+- 结果是一个**新数组**，里面只有一项被改了
+
+#### 3. 删除（`deleteTodo`）
+
+```jsx
+function deleteTodo(id) {
+  setTodos(todos.filter((todo) => todo.id !== id))
+}
+```
+
+- `filter` 返回一个新数组，只保留**不匹配** `id` 的项（Task 5 练习提示过 `filter`）
+- 等于把指定 `id` 的项排除掉
+
+### 筛选怎么实现
+
+```jsx
+const filteredTodos = todos.filter((todo) => {
+  if (filter === 'active') return !todo.done    // 未完成
+  if (filter === 'completed') return todo.done  // 已完成
+  return true                                    // 全部
+})
+```
+
+- `filter` 是数组方法：对每一项返回 `true` 就保留，`false` 就排除
+- 根据 `filter` state（`'all'` / `'active'` / `'completed'`）决定保留哪些
+- `filteredTodos` 是派生数据，**不需要放 state**——每次渲染时根据 `todos` 和 `filter` 现算
+
+> 为什么 `filteredTodos` 不放 state？
+> 因为它能从 `todos` + `filter` 算出来。如果再开一个 state 存它，就要在多处同步，容易不一致。**能算出来的数据，不要放 state。**
+
+### 子组件长什么样
+
+#### TodoInput（添加）
+
+```jsx
+function TodoInput({ onAdd }) {
+  const [text, setText] = useState('')
+
+  function handleAdd() {
+    if (text.trim() === '') return
+    onAdd(text.trim())
+    setText('')
+  }
+
+  return (
+    <div className="todo-input-row">
+      <input
+        type="text"
+        placeholder="添加一个待办..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button onClick={handleAdd}>添加</button>
+    </div>
+  )
+}
+```
+
+- 自己有一个 `text` state（输入框的文字）——这是子组件的**局部 state**，不需要共享
+- `onAdd` 是父组件传下来的回调：`onAdd(text.trim())` 把文字传给父组件
+- 添加后 `setText('')` 清空输入框
+
+#### TodoItem（单条待办）
+
+```jsx
+function TodoItem({ todo, onToggle, onDelete }) {
+  return (
+    <li className={todo.done ? 'todo-app-item done' : 'todo-app-item'}>
+      <button onClick={() => onToggle(todo.id)}>
+        {todo.done ? '✅' : '⬜'}
+      </button>
+      <span className="todo-app-text">{todo.text}</span>
+      <button onClick={() => onDelete(todo.id)}>✕</button>
+    </li>
+  )
+}
+```
+
+- 接收 `todo` 数据 + `onToggle` / `onDelete` 两个回调
+- 条件 `className`（Task 5）：完成时加 `done` 类名
+- 两个按钮各绑各的 `onClick`（Task 4），互不干扰
+
+#### TodoFilter（筛选）
+
+```jsx
+function TodoFilter({ filter, onFilterChange }) {
+  const filters = [
+    { key: 'all', label: '全部' },
+    { key: 'active', label: '未完成' },
+    { key: 'completed', label: '已完成' },
+  ]
+
+  return (
+    <div className="todo-filter">
+      {filters.map((f) => (
+        <button
+          key={f.key}
+          className={filter === f.key ? 'btn btn-filter active' : 'btn btn-filter'}
+          onClick={() => onFilterChange(f.key)}
+        >
+          {f.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+```
+
+- 用 `map` 渲染三个按钮（Task 5）
+- 当前选中的按钮加 `active` 类名高亮（条件渲染 Task 5）
+- 点击把 `f.key` 传给 `onFilterChange`，也就是父组件的 `setFilter`
+
+#### TodoStats（统计）
+
+```jsx
+function TodoStats({ todos }) {
+  const total = todos.length
+  const completed = todos.filter((todo) => todo.done).length
+
+  return (
+    <p className="todo-stats">
+      共 {total} 项 · 已完成 {completed} 项
+    </p>
+  )
+}
+```
+
+- 接收 `todos` 数组，用 `.length` 算总数，用 `filter` 算已完成数
+- 纯展示组件，没有 state
+
+### 知识点对照表
+
+| 功能 | 用到哪课的知识 |
+|------|---------------|
+| 拆 5 个组件 | 第 2 课（组件复用） |
+| 父子组件传数据 / 回调 | 第 3 课（props） |
+| `todos` / `filter` / 输入框文字 | 第 4 课（useState + 事件） |
+| 空状态提示、筛选高亮、条件 `className` | 第 5 课（条件渲染） |
+| 渲染待办列表、渲染筛选按钮 | 第 5 课（map + key） |
+
+**没有用到**：`useEffect`、`useReducer`、自定义 hook、localStorage、form `onSubmit`、`e.stopPropagation()`——这些都不在前 5 课范围内。
+
+### 练习
+
+1. 打开 `src/components/TodoApp.jsx`，试着自己改一改：
+   - 改初始待办的内容
+   - 把 `Date.now()` 换成自增数字（提示：在组件外定义一个 `let nextId = 100`）
+
+2. 进阶挑战：
+   - 加一个「清除已完成」按钮，一键删除所有已完成的待办（提示：`setTodos(todos.filter(t => !t.done))`）
+   - 加一个「全部完成 / 全部未完成」的切换按钮
+
+3. 想一想：如果把 `todos` state 从 `TodoApp` 搬到 `TodoItem` 里，会发生什么问题？（提示：兄弟组件之间能直接共享 state 吗？）
 
 完成练习后，保存文件，浏览器会自动刷新。
 

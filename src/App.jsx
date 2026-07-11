@@ -4,6 +4,7 @@ import Counter from './components/Counter.jsx'
 import NameForm from './components/NameForm.jsx'
 import ConditionalDemo from './components/ConditionalDemo.jsx'
 import TodoList from './components/TodoList.jsx'
+import TodoApp from './components/TodoApp.jsx'
 
 function App() {
   // JSX 中可以用 {} 嵌入 JavaScript 表达式
@@ -182,6 +183,20 @@ function App() {
 
         <div className="demo-box">
           <TodoList />
+        </div>
+      </section>
+
+      {/* ===== 13. 综合项目：Todo List ===== */}
+      <section className="section">
+        <h2>13. 综合项目 · Todo List</h2>
+        <p className="desc">
+          把前 5 课学的知识综合起来：组件复用、props 传数据 / 回调、
+          useState + 事件、条件渲染、列表渲染。支持添加 / 删除 / 切换 /
+          筛选 / 统计。
+        </p>
+
+        <div className="demo-box">
+          <TodoApp />
         </div>
       </section>
     </div>
