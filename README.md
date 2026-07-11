@@ -44,8 +44,8 @@ react-beginner-tutorial/
 | # | 任务 | 说明 |
 |---|------|------|
 | 1 | ✅ **环境搭建** | 安装工具、创建项目、理解目录结构 |
-| 2 | ✅ **JSX 与组件**（当前） | 学会 JSX 语法，写出第一个组件 |
-| 3 | **props** | 给组件传数据 |
+| 2 | ✅ **JSX 与组件** | 学会 JSX 语法，写出第一个组件 |
+| 3 | **props**（当前） | 给组件传数据 |
 | 4 | **state 与事件处理** | 管理组件状态，响应用户操作 |
 | 5 | **条件渲染与列表渲染** | 动态控制显示内容 |
 | 6 | **综合项目：Todo List** | 用学到的知识完成一个完整项目 |
@@ -113,6 +113,124 @@ function Greeting() {
 
 ---
 
+## 第 3 课：props
+
+### props 是什么？
+
+**props = 组件的"函数参数"**。调用组件时写什么属性，组件里就能拿到什么。
+
+```jsx
+// 调用：传 name="小明"
+<Greeting name="小明" />
+
+// 组件：用解构的方式接收
+function Greeting({ name }) {
+  return <p>你好，{name}！</p>
+}
+```
+
+是不是和函数参数很像？
+
+```js
+// 普通函数
+function add(a, b) { return a + b }
+add(1, 2)              // 传 1、2 进去
+
+// React 组件
+function Greeting({ name }) { return <p>你好，{name}</p> }
+<Greeting name="小明" /> // 传 name="小明" 进去
+```
+
+### props 是只读的
+
+组件里**不能**修改 props。数据从父组件传进来，组件只能"展示"，不能"改"：
+
+```jsx
+// ❌ 错误：组件里改 props
+function Greeting({ name }) {
+  name = '小红'   // 不要这样！
+  return <p>{name}</p>
+}
+```
+
+为什么只读？因为同一个组件可能被多处复用，你改了它，其它地方看到的就乱了。
+
+### 传不同类型
+
+props 不只是字符串。三种常用类型：
+
+```jsx
+{/* 字符串：双引号直接写 */}
+<Greeting name="小明" />
+
+{/* 数字：花括号包起来 */}
+<ProfileCard age={20} />
+
+{/* 布尔：true / false 直接写 */}
+<ProfileCard isStudent={true} />
+```
+
+注意数字和布尔要写 `{}`，因为花括号里塞的是 JS 表达式。
+
+### 默认值
+
+如果调用时不传某个 prop，会用组件里写好的默认值：
+
+```jsx
+function ProfileCard({ name = '你的名字', age = 18 }) {
+  return <p>{name} - {age}岁</p>
+}
+
+<ProfileCard />            // "你的名字 - 18岁"（走默认值）
+<ProfileCard name="小白" /> // "小白 - 18岁"（name 用传进来的）
+```
+
+### children prop
+
+写在组件标签**里面**的内容，会变成一个叫 `children` 的特殊 prop 自动传进去：
+
+```jsx
+<ProfileCard name="小白">
+  <span>⭐ 新人</span>
+</ProfileCard>
+
+// 组件里
+function ProfileCard({ name, children }) {
+  return (
+    <div>
+      <h3>{name}</h3>
+      {children}     {/* 这里会渲染那个 ⭐ 新人 */}
+    </div>
+  )
+}
+```
+
+`children` 让组件可以"包住"一段任意内容，非常适合做卡片、弹窗、布局。
+
+### props 是单向数据流
+
+数据从**父组件**流向**子组件**，子组件再传给它的子组件，依次往下。像水流一样：
+
+```
+App (父)
+ └─ ProfileCard (子)
+      └─ 任何 children（孙）
+```
+
+这让数据来源始终清晰：出问题就沿着水流往上游找。
+
+### 练习
+
+打开 `src/components/ProfileCard.jsx`，把默认值改成你自己的信息；
+打开 `src/App.jsx`，改一改第 6 个练习区域的 `name` 和 `bio`。
+
+要求：
+- 至少展示一个数字 prop 和一个布尔 prop
+- 至少展示一次默认 props（不传值）
+- 至少展示一次 children（在标签内写点内容）
+
+---
+
 每个任务都在对应的 Issue 中跟踪。
 
 ## 你学到了什么
@@ -120,6 +238,8 @@ function Greeting() {
 完成本教程后，你将能够：
 
 - 理解 React 的核心概念（组件、JSX、props、state）
+- 写一个可复用的函数组件，用 props 给它传数据
+- 理解 props 是只读的、数据是单向流动的
 - 用 Vite 创建和运行 React 项目
 - 独立写一个 Todo List 交互页面
 - 知道下一步学什么
