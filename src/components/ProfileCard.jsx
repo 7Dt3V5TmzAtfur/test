@@ -6,15 +6,15 @@
 // - 显示一句话介绍
 // - 用 CSS 让卡片好看
 
-function ProfileCard() {
+function ProfileCard({name,bio}) {
   // 在这里写你的代码
 
   return (
     <div className="profile-card">
       {/* 替换下面的内容为你自己的信息 */}
       <div className="profile-avatar">😺</div>
-      <h3>你的名字</h3>
-      <p className="profile-bio">写一句关于你的话</p>
+      <h3>{name}</h3>
+      <p className="profile-bio">{bio}</p>
     </div>
   )
 }

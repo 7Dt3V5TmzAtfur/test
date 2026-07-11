@@ -50,7 +50,7 @@ function App() {
         </p>
 
         <div className="demo-box">
-          <ProfileCard />
+          <ProfileCard name="贾氛围" bio="煞笔"/>
         </div>
       </section>
     </div>
