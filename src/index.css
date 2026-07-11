@@ -236,3 +236,96 @@ h1 {
   color: #333;
   margin-bottom: 0;
 }
+
+/* ===== ConditionalDemo (Task 5) ===== */
+
+.conditional-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cond-block {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.cond-block h4 {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.cond-result {
+  margin: 8px 0 12px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+/* ===== TodoList (Task 5) ===== */
+
+.todo-list {
+  padding: 8px 0;
+}
+
+.todo-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  user-select: none;
+}
+
+.todo-item:hover {
+  background: #f5f5ff;
+}
+
+/* 完成状态：灰底 + 删除线 */
+.todo-item.done {
+  background: #f5f5f5;
+  opacity: 0.65;
+}
+
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-check {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.todo-text {
+  font-size: 1rem;
+  color: #333;
+}
+
+.todo-hint {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 0;
+  text-align: center;
+}

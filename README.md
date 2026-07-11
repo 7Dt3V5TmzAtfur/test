@@ -46,8 +46,8 @@ react-beginner-tutorial/
 | 1 | ✅ **环境搭建** | 安装工具、创建项目、理解目录结构 |
 | 2 | ✅ **JSX 与组件** | 学会 JSX 语法，写出第一个组件 |
 | 3 | ✅ **props** | 给组件传数据 |
-| 4 | **state 与事件处理**（当前） | 管理组件状态，响应用户操作 |
-| 5 | **条件渲染与列表渲染** | 动态控制显示内容 |
+| 4 | ✅ **state 与事件处理** | 管理组件状态，响应用户操作 |
+| 5 | **条件渲染与列表渲染**（当前） | 动态控制显示内容 |
 | 6 | **综合项目：Todo List** | 用学到的知识完成一个完整项目 |
 
 ## 第 2 课：JSX 与组件
@@ -378,6 +378,229 @@ function NameForm() {
    - 一个输入框，输入姓名
    - 实时显示「你好，{姓名}！」
    - 输入为空时显示「请输入你的名字」
+
+完成练习后，保存文件，浏览器会自动刷新。
+
+## 第 5 课：条件渲染与列表渲染
+
+### 条件渲染是什么？
+
+条件渲染 = 根据 state（或其他条件）决定**显示什么内容**。
+
+最常见的场景：
+
+- 已登录 → 显示「欢迎回来」；未登录 → 显示「请登录」
+- 有数据 → 显示列表；没数据 → 显示「暂无内容」
+- 点击「详情」按钮 → 才显示详情区块
+
+React 里有三种写法，各有适用场景。
+
+### 写法 1：if/else
+
+把判断逻辑写在一个函数里，根据条件 `return` 不同的 JSX。适合**分支多、每个分支内容很长**的情况。
+
+```jsx
+function renderGreeting() {
+  if (isLoggedIn) {
+    return <p>👋 欢迎回来，小明！</p>
+  } else {
+    return <p>🔒 请先登录</p>
+  }
+}
+
+// 在 JSX 里调用这个函数
+return <div>{renderGreeting()}</div>
+```
+
+> 为什么不直接在 `{}` 里写 `if`？
+> 因为 `{}` 里只能放**表达式**（有返回值的代码），`if` 是**语句**，没有返回值。
+> 所以把 `if` 写到函数里，再调用函数拿返回值。
+
+### 写法 2：三元运算符 `? :`
+
+`condition ? 满足时显示 : 不满足时显示`。适合**二选一**的情况，最常用。
+
+```jsx
+return (
+  <p>{isLoggedIn ? '✅ 已登录' : '❌ 未登录'}</p>
+)
+```
+
+三元运算符是表达式（有返回值），可以直接写在 `{}` 里。
+
+### 写法 3：`&&` 短路
+
+`condition && <Element>` —— 条件为 `true` 时才显示后面的内容，为 `false` 时什么都不渲染。适合**满足条件才显示**的场景。
+
+```jsx
+return (
+  <div>
+    <button onClick={() => setShowDetail(!showDetail)}>
+      {showDetail ? '隐藏详情' : '显示详情'}
+    </button>
+    {showDetail && <p>📖 这是详情内容</p>}
+  </div>
+)
+```
+
+`&&` 的原理：JavaScript 的 `&&` 是短路求值。
+
+- `true && X` → 结果是 `X`
+- `false && X` → 结果是 `false`（X 不执行）
+
+React 渲染 `false` 时什么都不显示，所以 `false && <Element>` 等于「不渲染」。
+
+> ⚠️ 坑：`&&` 左边一定要是布尔值。
+> 如果写成 `count && <p>...</p>`，当 `count` 是 `0` 时，会渲染出一个 `0` 字符到页面上（因为 `0` 是假值，但 `0` 本身会被 React 显示出来）。
+> 安全写法：`count > 0 && <p>...</p>`，明确转成布尔值。
+
+### 列表渲染是什么？
+
+列表渲染 = 把一个数组的数据，变成页面上的一排 JSX 元素。
+
+比如你有一个待办数组：
+
+```jsx
+const todos = [
+  { id: 1, text: '学习 JSX', done: true },
+  { id: 2, text: '学习 props', done: true },
+  { id: 3, text: '学习 state', done: false },
+]
+```
+
+想渲染成：
+
+```html
+<li>学习 JSX</li>
+<li>学习 props</li>
+<li>学习 state</li>
+```
+
+怎么做？用数组的 `.map()` 方法。
+
+### map() + key
+
+`.map()` 是数组的方法：把每个元素变成另一个东西。在这里，就是把每个数据元素变成一个 JSX 标签。
+
+```jsx
+const todos = [
+  { id: 1, text: '学习 JSX', done: true },
+  { id: 2, text: '学习 props', done: true },
+  { id: 3, text: '学习 state', done: false },
+]
+
+function TodoList() {
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>
+          {todo.done ? '✅' : '⬜'} {todo.text}
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+拆开看：
+
+1. `todos.map(...)` 遍历数组，每个元素 `todo` 返回一个 `<li>`
+2. `map` 返回的是一个 JSX 数组：`[<li>...</li>, <li>...</li>, <li>...</li>]`
+3. `{}` 把这个数组嵌入到 `<ul>` 里，React 自动展开渲染
+
+> 为什么能用 `{}` 嵌入数组？
+> 因为数组也是表达式（有返回值）。React 渲染数组时，会把每个元素依次渲染出来。
+
+### key 的作用和注意事项
+
+`key` 是写在列表元素上的特殊属性，帮 React **识别哪个是哪个**。
+
+```jsx
+{todos.map((todo) => (
+  <li key={todo.id}>{todo.text}</li>   {/* ← key 写在这里 */}
+))}
+```
+
+#### key 有什么用？
+
+React 更新列表时，需要知道：
+
+- 哪些元素是新加的？
+- 哪些元素被删除了？
+- 哪些元素换了位置？
+
+有 `key`，React 就能精准地只更新变化的那一项，不用把整个列表重新渲染一遍。**列表越长，key 带来的性能优势越明显。**
+
+#### key 的三条规则
+
+1. **必须唯一**：同一个列表里，每个元素的 `key` 不能重复。
+2. **要稳定**：同一个数据的 `key` 不能变来变去（不能用随机数，不能用数组下标当 key）。
+3. **不能用数组下标 `index` 当 key**（除非列表只读不改）。
+
+> ⚠️ 为什么不用 `index` 当 key？
+> 如果你删除了列表中间一项，后面的下标会全部前移，React 会以为「下标 2 的内容变了」而不是「下标 2 的元素被删了」，可能导致渲染错乱（尤其是带 state 的子组件）。
+> 正确做法：用数据自己的唯一 `id`。
+
+### 综合：待办列表 + 完成状态切换
+
+把条件渲染和列表渲染结合起来：渲染一个待办列表，点击某一项可以切换完成状态，完成时显示删除线。
+
+`src/components/TodoList.jsx`：
+
+```jsx
+import { useState } from 'react'
+
+function TodoList() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: '学习 JSX', done: true },
+    { id: 2, text: '学习 props', done: true },
+    { id: 3, text: '学习 state', done: false },
+    { id: 4, text: '学习条件与列表渲染', done: false },
+  ])
+
+  function toggleTodo(id) {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo
+      )
+    )
+  }
+
+  return (
+    <ul className="todo-items">
+      {todos.map((todo) => (
+        <li
+          key={todo.id}
+          className={todo.done ? 'todo-item done' : 'todo-item'}
+          onClick={() => toggleTodo(todo.id)}
+        >
+          <span className="todo-check">{todo.done ? '✅' : '⬜'}</span>
+          <span className="todo-text">{todo.text}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+export default TodoList
+```
+
+拆开看几个关键点：
+
+1. **`map` 渲染列表**：每个 `todo` → 一个 `<li>`，`key={todo.id}` 用 id 做唯一标识。
+2. **条件样式**：`className={todo.done ? 'todo-item done' : 'todo-item'}` —— 完成时多加一个 `done` 类名，CSS 里给 `done` 加删除线和灰色。
+3. **不可变更新**：`toggleTodo` 里**不能直接写 `todos[i].done = !todos[i].done`**。要用 `map` 返回一个**新数组**，匹配 `id` 的那一项用 `{ ...todo, done: !todo.done }` 创建新对象，其他项保持不变。
+   - 为什么？因为 React 靠「引用是否变了」判断 state 有没有更新。直接改原数组，React 可能不重新渲染。
+
+### 练习
+
+1. 打开 `src/components/ConditionalDemo.jsx`，自己加一个条件分支：
+   - 加一个 state `hasError`（布尔）
+   - 用 `&&` 显示「⚠️ 出错了」的提示
+
+2. 打开 `src/components/TodoList.jsx`，试着自己改一改：
+   - 在数组里多加两条待办
+   - 进阶：把未完成和已完成**分开显示**（提示：用 `todos.filter(todo => !todo.done)` 和 `todos.filter(todo => todo.done)` 配合 `map()`）
 
 完成练习后，保存文件，浏览器会自动刷新。
 
