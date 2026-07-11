@@ -1,9 +1,11 @@
 import Greeting from './components/Greeting.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
+import Counter from './components/Counter.jsx'
+import NameForm from './components/NameForm.jsx'
 
 function App() {
   // JSX 中可以用 {} 嵌入 JavaScript 表达式
-  const title = 'JSX 与组件 · props'
+  const title = 'JSX · props · state 与事件'
   const currentYear = new Date().getFullYear()
   const isBeginner = true
 
@@ -97,6 +99,47 @@ function App() {
           <ProfileCard name="你的名字" bio="一句话介绍你自己" age={18} isStudent={true}>
             <span className="badge">🎯 练习中</span>
           </ProfileCard>
+        </div>
+      </section>
+
+      {/* ===== 7. useState + onClick：计数器 ===== */}
+      <section className="section">
+        <h2>7. state 与点击事件</h2>
+        <p className="desc">
+          <code>useState</code> 让组件拥有「自己能改」的数据。
+          点击按钮 → 调用 <code>setCount</code> → React 自动重新渲染。
+        </p>
+
+        <div className="demo-box">
+          <Counter />
+        </div>
+      </section>
+
+      {/* ===== 8. 受控组件：表单 input ===== */}
+      <section className="section">
+        <h2>8. 受控组件 · input</h2>
+        <p className="desc">
+          input 的 <code>value</code> 绑到 state，<code>onChange</code> 把新值写回 state。
+          state 变 → input 变，形成闭环。
+        </p>
+
+        <div className="demo-box">
+          <NameForm />
+        </div>
+      </section>
+
+      {/* ===== 9. 练习 ===== */}
+      <section className="section">
+        <h2>9. 练习：改改看</h2>
+        <p className="desc">
+          打开 <code>src/components/Counter.jsx</code> 和
+          <code> src/components/NameForm.jsx</code>，试着自己改一改：
+          加一个「+10」按钮，或者让表单显示输入的字符数。
+        </p>
+
+        <div className="demo-box">
+          <Counter />
+          <NameForm />
         </div>
       </section>
     </div>

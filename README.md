@@ -45,8 +45,8 @@ react-beginner-tutorial/
 |---|------|------|
 | 1 | ✅ **环境搭建** | 安装工具、创建项目、理解目录结构 |
 | 2 | ✅ **JSX 与组件** | 学会 JSX 语法，写出第一个组件 |
-| 3 | **props**（当前） | 给组件传数据 |
-| 4 | **state 与事件处理** | 管理组件状态，响应用户操作 |
+| 3 | ✅ **props** | 给组件传数据 |
+| 4 | **state 与事件处理**（当前） | 管理组件状态，响应用户操作 |
 | 5 | **条件渲染与列表渲染** | 动态控制显示内容 |
 | 6 | **综合项目：Todo List** | 用学到的知识完成一个完整项目 |
 
@@ -228,6 +228,158 @@ App (父)
 - 至少展示一个数字 prop 和一个布尔 prop
 - 至少展示一次默认 props（不传值）
 - 至少展示一次 children（在标签内写点内容）
+
+---
+
+## 第 4 课：state 与事件处理
+
+### state 是什么？
+
+上一节学的 **props** 是「外部传进来」的数据，组件自己不能改。
+**state** 是组件「自己内部」的数据，组件**可以改**它。
+
+打个比方：
+
+```
+props  = 别人递给你的纸条（你能看，不能改人家写的内容）
+state  = 你自己的笔记本（你想怎么改就怎么改）
+```
+
+state 一变，React 就会**自动重新渲染**这个组件，把新值显示到页面上。
+这是 React 最核心的能力：**数据变了 → 页面自动更新**。
+
+### useState 钩子
+
+React 提供了一个叫 `useState` 的函数，用来给函数组件添加 state。
+
+```jsx
+import { useState } from 'react'
+
+function Counter() {
+  // count     —— 当前值（变量）
+  // setCount  —— 修改它的函数（setter）
+  // 0         —— 初始值
+  const [count, setCount] = useState(0)
+
+  return <p>当前计数：{count}</p>
+}
+```
+
+解构出来的两个东西：
+
+| 名字 | 作用 |
+|---|---|
+| `count` | 当前值，直接在 JSX 里用 `{count}` 显示 |
+| `setCount` | 修改它的函数，**只能用这个函数改**，不能直接 `count = 5` |
+
+> ⚠️ 为什么不能直接 `count = 5`？因为 React 监听不到你这么改。
+> 只有调用 `setCount(5)`，React 才知道「值变了，要重新渲染」。
+
+### 事件处理 onClick
+
+给按钮绑定点击事件，用 `onClick`：
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>当前计数：{count}</p>
+      {/* 点击按钮 → 调用 setCount(count + 1) → React 重新渲染 */}
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  )
+}
+```
+
+注意 `onClick` 的值是一个**函数**，不是函数调用结果：
+
+```jsx
+// ✅ 传一个函数
+<button onClick={() => setCount(count + 1)}>+1</button>
+
+// ❌ 直接调用：页面一加载就执行了，点击反而没反应
+<button onClick={setCount(count + 1)}>+1</button>
+```
+
+### state 更新触发重新渲染
+
+整个流程是这样的：
+
+```
+1. 用户点击按钮
+2. 调用 setCount(count + 1)
+3. React 发现 state 变了
+4. React 重新调用 Counter() 函数，拿到新的 JSX
+5. 对比新旧 JSX，更新页面
+```
+
+所以你**不需要手动操作 DOM**，只要管好 state，页面会自动跟上。
+这就是「声明式 UI」：你声明「页面应该长这样」，React 负责把它变成长这样。
+
+### 更新数字 state 的小坑
+
+当新值依赖旧值时（比如 `count + 1`），更安全的写法是传一个**函数**：
+
+```jsx
+// ✅ 推荐：传函数，React 会把最新值传给你
+setCount(prev => prev + 1)
+
+// ⚠️ 也能用，但连续多次调用可能出错
+setCount(count + 1)
+```
+
+为什么？因为 `count` 是这次渲染时的快照，连续调用 `setCount(count + 1)` 三次，
+三次拿到的 `count` 是同一个旧值，结果只 +1 而不是 +3。
+传函数就没这问题，React 保证 `prev` 一定是最新值。
+
+### 受控组件：表单 input
+
+表单输入框 `<input>` 默认自己管自己的值（非受控）。
+React 想完全控制它，就要把它的值绑到 state 上：
+
+```jsx
+function NameForm() {
+  const [name, setName] = useState('')
+
+  return (
+    <div>
+      {/* value 绑到 state，onChange 改 state */}
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <p>你输入的是：{name}</p>
+    </div>
+  )
+}
+```
+
+两个关键点：
+
+1. `value={name}` —— input 显示的值来自 state
+2. `onChange={(e) => setName(e.target.value)}` —— 用户输入时，把新值写回 state
+
+这就是**受控组件**：input 的值完全由 state 控制，state 变 → input 变；
+用户输入 → 改 state → input 显示新值。一个闭环。
+
+`e.target.value` 是什么？`e` 是事件对象，`e.target` 是触发事件的元素（这里就是 input），
+`.value` 是它当前的值。
+
+### 练习
+
+1. 打开 `src/components/Counter.jsx`，实现一个计数器：
+   - 显示当前数字
+   - 「+1」「-1」两个按钮
+   - 「重置」按钮（回到 0）
+
+2. 打开 `src/components/NameForm.jsx`，实现一个姓名输入表单：
+   - 一个输入框，输入姓名
+   - 实时显示「你好，{姓名}！」
+   - 输入为空时显示「请输入你的名字」
+
+完成练习后，保存文件，浏览器会自动刷新。
 
 ---
 
