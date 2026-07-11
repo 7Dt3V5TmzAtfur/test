@@ -3,7 +3,7 @@ import ProfileCard from './components/ProfileCard.jsx'
 
 function App() {
   // JSX 中可以用 {} 嵌入 JavaScript 表达式
-  const title = 'JSX 与组件'
+  const title = 'JSX 与组件 · props'
   const currentYear = new Date().getFullYear()
   const isBeginner = true
 
@@ -26,12 +26,12 @@ function App() {
         </div>
       </section>
 
-      {/* ===== 2. 组件复用 ===== */}
+      {/* ===== 2. 组件复用 + props 传字符串 ===== */}
       <section className="section">
-        <h2>2. 组件复用</h2>
+        <h2>2. 组件复用 · 传字符串 props</h2>
         <p className="desc">
           组件就像"自定义标签"。写一次 Greeting 组件，
-          可以多次使用，每次传不同的 name。
+          可以多次使用，每次通过 <code>name="..."</code> 传不同的字符串。
         </p>
 
         <div className="demo-box">
@@ -41,16 +41,62 @@ function App() {
         </div>
       </section>
 
-      {/* ===== 3. 练习区域 ===== */}
+      {/* ===== 3. props 传不同类型 ===== */}
       <section className="section">
-        <h2>3. 练习：个人信息卡片</h2>
+        <h2>3. props 可以传各种类型</h2>
         <p className="desc">
-          编辑 <code>src/components/ProfileCard.jsx</code>，
-          把里面的内容改成你自己的信息。
+          props 不只是字符串。数字要写 <code>{'{ }'}</code>，
+          布尔也一样，true / false 直接写就行。
         </p>
 
         <div className="demo-box">
-          <ProfileCard name="贾氛围" bio="煞笔"/>
+          {/* 传字符串 / 数字 / 布尔 */}
+          <ProfileCard name="小明" age={20} isStudent={true} />
+          <ProfileCard name="小红" age={25} isStudent={false} />
+        </div>
+      </section>
+
+      {/* ===== 4. 默认 props（默认值）===== */}
+      <section className="section">
+        <h2>4. 默认 props（默认值）</h2>
+        <p className="desc">
+          如果调用组件时没传某个 prop，会用组件里写好的默认值。
+        </p>
+
+        <div className="demo-box">
+          {/* 啥也不传 → 全部走默认值 */}
+          <ProfileCard />
+        </div>
+      </section>
+
+      {/* ===== 5. children prop ===== */}
+      <section className="section">
+        <h2>5. children prop</h2>
+        <p className="desc">
+          写在组件标签<strong>里面</strong>的内容，会变成
+          一个叫 <code>children</code> 的特殊 prop 传进去。
+        </p>
+
+        <div className="demo-box">
+          <ProfileCard name="小白">
+            <span className="badge">⭐ 新人</span>
+            <p className="profile-extra">这是 children 里的内容！</p>
+          </ProfileCard>
+        </div>
+      </section>
+
+      {/* ===== 6. 练习：个人信息卡片 ===== */}
+      <section className="section">
+        <h2>6. 练习：把卡片改成你自己的</h2>
+        <p className="desc">
+          编辑 <code>src/components/ProfileCard.jsx</code>，
+          改一改默认值；编辑下面这一行，把姓名 / 介绍换成你自己的。
+        </p>
+
+        <div className="demo-box">
+          <ProfileCard name="你的名字" bio="一句话介绍你自己" age={18} isStudent={true}>
+            <span className="badge">🎯 练习中</span>
+          </ProfileCard>
         </div>
       </section>
     </div>
