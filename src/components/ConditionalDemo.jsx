@@ -16,6 +16,7 @@ function ConditionalDemo() {
   // 两个 state 用来演示三种写法
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   // 方式 1：if/else
   // 写成一个函数，根据条件 return 不同的 JSX
@@ -60,6 +61,22 @@ function ConditionalDemo() {
         {showDetail && (
           <p className="cond-result">
             📖 这是详情内容：&& 适合「满足条件才显示」的场景
+          </p>
+        )}
+      </div>
+
+      {/* ===== 作业：有错误 ===== */}
+      <div className="cond-block">
+        <h4>作业：有错误</h4>
+        <p className="cond-result">
+          {hasError ? '❌ 有错误' : '✅ 无错误'}
+        </p>
+        <button className="btn btn-primary" onClick={() => setHasError(!hasError)}>
+          {hasError ? '清除错误' : '模拟错误'}
+        </button>
+        {hasError && (
+          <p className="cond-result" style={{ color: 'red' }}>
+            请检查输入的格式是否正确
           </p>
         )}
       </div>

@@ -22,6 +22,8 @@ function TodoList() {
     { id: 2, text: '学习 props', done: true },
     { id: 3, text: '学习 state', done: false },
     { id: 4, text: '学习条件与列表渲染', done: false },
+    { id: 5, text: '学习事件处理', done: false },
+    { id: 6, text: '学习知识地图', done: false },
   ])
 
   // 2) 点击切换完成状态
@@ -37,21 +39,43 @@ function TodoList() {
 
   return (
     <div className="todo-list">
+      {/* first team : unfinished */}
+      <h3> 未完成 ({todos.filter(t => !t.done).length})</h3>
       <ul className="todo-items">
-        {/* 3) map() 把数组变成 JSX 数组
-              每个 todo → 一个 <li>
-              key={todo.id} 是必须的，帮 React 高效更新 */}
-        {todos.map((todo) => (
+        {todos
+        .filter(todo => !todo.done) 
+        .sort((a, b) => a.id - b.id)
+        .map(todo => (
           <li
             key={todo.id}
-            // 4) 条件样式：done 为 true 时加上 'done' 类名
-            className={todo.done ? 'todo-item done' : 'todo-item'}
+            className={'todo-item'}
             onClick={() => toggleTodo(todo.id)}
           >
-            <span className="todo-check">{todo.done ? '✅' : '⬜'}</span>
+            <span className="todo-check">⬜</span>
             <span className="todo-text">{todo.text}</span>
           </li>
         ))}
+      </ul>
+
+
+      {/* second team : completed */}
+      <h3> 已完成 ({todos.filter(t => t.done).length})</h3>
+      <ul className="todo-items">
+        {
+          todos
+          .filter(todo => todo.done) 
+          .sort((a, b) => a.id - b.id)
+          .map(todo => (
+            <li
+              key={todo.id}
+              className={'todo-item done'}
+              onClick={() => toggleTodo(todo.id)}
+            >
+              <span className="todo-check">✅</span>
+              <span className="todo-text">{todo.text}</span>
+            </li>
+          ))
+        }
       </ul>
       <p className="todo-hint">点击任意一项切换完成状态</p>
     </div>
